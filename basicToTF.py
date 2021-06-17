@@ -1,7 +1,4 @@
-import model
-import imageUtils
 import argparse
-
 parser = argparse.ArgumentParser()
 parser.add_argument('weights')
 parser.add_argument('model')
@@ -10,6 +7,10 @@ args = parser.parse_args()
 modeldir = args.model
 weights = args.weights
 dims = args.dims
+
+
+import model
+import imageUtils
 
 vae = model.VAE.loadFromBasic(weights, (36, 36, 3), dims)
 # vae = model.VAE.loadFromBasic('basicWeights/weights 4.csv', (36, 36, 3), 4)

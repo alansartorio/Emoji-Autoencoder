@@ -1,10 +1,19 @@
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument('model')
+parser.add_argument('images')
+args = parser.parse_args()
+modeldir = args.model
+imagesdir = args.images
+
+
+
 import model, imageUtils
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 import matplotlib.cm as cmx
 from mpl_toolkits.mplot3d import Axes3D
-import argparse
 
 def scatter3d(x, y, z, cs, colorsMap='jet'):
     cm = plt.get_cmap(colorsMap)
@@ -27,12 +36,6 @@ def scatter(*datas):
         z = datas[2]
         scatter3d(*datas, (min(z), max(z)))
 
-parser = argparse.ArgumentParser()
-parser.add_argument('model')
-parser.add_argument('images')
-args = parser.parse_args()
-modeldir = args.model
-imagesdir = args.images
 
 images = imageUtils.loadImages(imagesdir)
 # images = imageUtils.loadImages('Images/Microsoft')

@@ -1,17 +1,19 @@
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument('model')
+args = parser.parse_args()
+modeldir = args.model
+
+
 from tkinter import *
 import model
 import numpy as np
 from PIL import Image, ImageTk
 import imageUtils
 import os
-import argparse
 
 outputDir = 'outputImages'
 
-parser = argparse.ArgumentParser()
-parser.add_argument('model')
-args = parser.parse_args()
-modeldir = args.model
 
 currentImage: Image.Image = None
 

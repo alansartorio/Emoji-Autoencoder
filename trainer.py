@@ -1,13 +1,13 @@
-import model
-import imageUtils
 import argparse
-
 parser = argparse.ArgumentParser()
 parser.add_argument('model')
 parser.add_argument('images')
 args = parser.parse_args()
 modelsDir = args.model
 imagesDir = args.images
+
+import model
+import imageUtils
 
 # size = (36, 36, 3)
 
