@@ -1,7 +1,7 @@
 *.png
 *.zip
 *.csv
-*.tf/*
+**/*.tf/*
 
 __pycache__/
 *.pyc

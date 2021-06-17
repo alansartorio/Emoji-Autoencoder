@@ -31,10 +31,15 @@ def getLatent():
     return np.array([slider.get() for slider in sliders])
 
 
-sliderLimits = 1
+sliderLimits = 5
+def getCellPos():
+    l = len(sliders)
+    return dict(row=l%10, column=l//10)
+slidersPanel = Frame(master)
+slidersPanel.pack()
 def addSlider():
-    w = Scale(master, from_=-sliderLimits, to=sliderLimits, orient=HORIZONTAL, command=lambda event:updateImage(), length=500, resolution=0.01)
-    w.pack()
+    w = Scale(slidersPanel, from_=-sliderLimits, to=sliderLimits, orient=HORIZONTAL, command=lambda event:updateImage(), resolution=0.01)
+    w.grid(**getCellPos())
     sliders.append(w)
 
 vae = model.VAE.load(modeldir)
@@ -60,6 +65,7 @@ for _ in range(vae.latentDim):
 
 if not os.path.exists(outputDir):
     os.mkdir(outputDir)
+
 lastIndex = 0
 
 def getAvailablePath():

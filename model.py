@@ -41,7 +41,7 @@ class VAE(keras.Model):
 
     def train(self, images: np.ndarray, epochs: int = 30, batch_size: int = 128):
         self.compile(optimizer=keras.optimizers.Adam())
-        self.fit(images, epochs=epochs, batch_size=batch_size)
+        self.fit(images, epochs=epochs, batch_size=batch_size, shuffle=True)
     
     def getLatent(self, image: np.ndarray):
         out = self.encoder.predict(np.expand_dims(image, 0))[0]
@@ -108,9 +108,15 @@ class VAE(keras.Model):
         }
 
 def buildModel(imgShape: tuple[int, int, int], latentDim: int):
+    minSize = (imgShape[0]//4, imgShape[1]//4, imgShape[2])
 
     encoder_inputs = keras.Input(shape=imgShape)
-    x = layers.Flatten()(encoder_inputs)
+    x = encoder_inputs
+    x = layers.Conv2D(32, (3, 3), activation="relu", padding="same")(x)
+    x = layers.MaxPooling2D((2, 2), padding="same")(x)
+    x = layers.Conv2D(32, (3, 3), activation="relu", padding="same")(x)
+    x = layers.MaxPooling2D((2, 2), padding="same")(x)
+    x = layers.Flatten()(x)
     # x = layers.Dense(3888, activation="sigmoid")(x)
     x = layers.Dense(128, activation="sigmoid")(x)
 
@@ -123,8 +129,12 @@ def buildModel(imgShape: tuple[int, int, int], latentDim: int):
 
     latent_inputs = keras.Input(shape=(latentDim,))
     x = layers.Dense(128, activation="sigmoid")(latent_inputs)
-    x = layers.Dense(np.product(imgShape), activation="sigmoid")(x)
-    decoder_outputs = layers.Reshape(imgShape)(x)
+    x = layers.Dense(np.product(minSize), activation="sigmoid")(x)
+    x = layers.Reshape(minSize)(x)
+    x = layers.Conv2DTranspose(32, (3, 3), strides=2, activation="relu", padding="same")(x)
+    x = layers.Conv2DTranspose(32, (3, 3), strides=2, activation="relu", padding="same")(x)
+    x = layers.Conv2D(3, (3, 3), activation="sigmoid", padding="same")(x)
+    decoder_outputs = x
     decoder = keras.Model(latent_inputs, decoder_outputs, name="decoder")
     decoder.summary()
 
