@@ -108,7 +108,8 @@ class VAE(keras.Model):
         }
 
 def buildModel(imgShape: tuple[int, int, int], latentDim: int):
-    minSize = (imgShape[0]//4, imgShape[1]//4, imgShape[2])
+    divisions = 2
+    minSize = (imgShape[0]//(2**divisions), imgShape[1]//(2**divisions), imgShape[2])
 
     encoder_inputs = keras.Input(shape=imgShape)
     x = encoder_inputs
@@ -117,8 +118,7 @@ def buildModel(imgShape: tuple[int, int, int], latentDim: int):
     x = layers.Conv2D(32, (3, 3), activation="relu", padding="same")(x)
     x = layers.MaxPooling2D((2, 2), padding="same")(x)
     x = layers.Flatten()(x)
-    # x = layers.Dense(3888, activation="sigmoid")(x)
-    x = layers.Dense(128, activation="sigmoid")(x)
+    x = layers.Dense(512, activation="relu")(x)
 
     z_mean = layers.Dense(latentDim, name="z_mean")(x)
     z_log_var = layers.Dense(latentDim, name="z_log_var")(x)
@@ -128,8 +128,8 @@ def buildModel(imgShape: tuple[int, int, int], latentDim: int):
     encoder.summary()
 
     latent_inputs = keras.Input(shape=(latentDim,))
-    x = layers.Dense(128, activation="sigmoid")(latent_inputs)
-    x = layers.Dense(np.product(minSize), activation="sigmoid")(x)
+    x = layers.Dense(512, activation="relu")(latent_inputs)
+    x = layers.Dense(np.product(minSize), activation="relu")(x)
     x = layers.Reshape(minSize)(x)
     x = layers.Conv2DTranspose(32, (3, 3), strides=2, activation="relu", padding="same")(x)
     x = layers.Conv2DTranspose(32, (3, 3), strides=2, activation="relu", padding="same")(x)
